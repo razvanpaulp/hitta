@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,8 +65,8 @@ public class CommandInterpreter {
 
 	private List<String> retrieveCommands(final String fileName) throws IOException {
 
-		final File file = ResourceUtils.getFile(fileName);
-		final InputStreamReader reader = new InputStreamReader(openInputStream(file),Charset.forName("UTF-8"));
+		final URL file = ResourceUtils.getURL(fileName);
+		final InputStreamReader reader = new InputStreamReader(file.openStream(),Charset.forName("UTF-8"));
 		final BufferedReader bufferedReader = new BufferedReader(reader);
 
 		final List<String> list = new ArrayList<>();
@@ -78,19 +79,6 @@ public class CommandInterpreter {
 		return list;
 	}
 
-	private static FileInputStream openInputStream(final File file) throws IOException {
-		if (file.exists()) {
-			if (file.isDirectory()) {
-				throw new IOException("File '" + file + "' exists but is a directory");
-			}
-			if (file.canRead() == false) {
-				throw new IOException("File '" + file + "' cannot be read");
-			}
-		} else {
-			throw new FileNotFoundException("File '" + file + "' does not exist");
-		}
-		return new FileInputStream(file);
-	}
 
 	private static void populateCommandRelationships(List<Command> commands) {
 		for (int i = 0; i < commands.size(); i++) {
